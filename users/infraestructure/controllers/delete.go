@@ -10,7 +10,7 @@ import (
 )
 
 func Delete(c *gin.Context){
-	id_str := c.Param("id_user")
+	id_str := c.Param("user_id")
 	id,err:= strconv.Atoi(id_str)
 		if err!=nil{
 			log.Fatal("no se pudo obtener el id del usuario")

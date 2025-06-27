@@ -14,12 +14,12 @@ type Conn_MYSQL struct{
 
 func GetDBpool()*Conn_MYSQL{
 
-	dbUser:=""
-	dbPass:=""
-	dbHost:=""
-	dbSchema:=""
+	dbUser:="root"
+	dbPass:="l0p3z2005"
+	dbHost:="localhost"
+	dbSchema:="vitalvest"
 
-	dsm:= fmt.Sprint("%s:%s@tcp(%s:3306)/%s",dbUser,dbPass,dbHost,dbSchema)
+	dsm:= fmt.Sprintf("%s:%s@tcp(%s:3306)/%s",dbUser,dbPass,dbHost,dbSchema)
 
 	db,err:=sql.Open("mysql",dsm)
 	if err!=nil{

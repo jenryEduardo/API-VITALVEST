@@ -3,8 +3,8 @@ package infraestructure
 import (
 	"API-VITALVEST/core"
 	"API-VITALVEST/users/domain"
+	"fmt"
 	"log"
-	
 ) 
 
 type MYSQLRepository struct{
@@ -30,7 +30,7 @@ func (r *MYSQLRepository)Save(user domain.User)error{
 
 func (r *MYSQLRepository)Delete(id int)error{
 
-	query := "DELETE FROM users WHERE id_user = ?"
+	query := "DELETE FROM users WHERE id = ?"
 	_,err:=r.conn.DB.Exec(query,id)
 		if err!=nil{
 			log.Fatal("no se pudo eliminar al usuario verifique el id o la siintaxis sql")
@@ -40,13 +40,45 @@ return nil
 }
 
 func (r *MYSQLRepository)Update(user domain.User,id int)error{
-	query := "UPDATE users(name,age,fech_nac) values(?,?,?) WHERE id_user = ?"
+	query := "UPDATE users SET name=?, age=?, fech_nac=? WHERE id = ?"
 
-	_,err :=r.conn.DB.Exec(query,&user.Name,&user.Age,&user.Fech_nac,&id)
+	response,err :=r.conn.DB.Exec(query,&user.Name,&user.Age,&user.Fech_nac,id)
+
 
 		if err!=nil{
-
+			fmt.Println("no se pudo actualizar el dato verifique el sinstaxis o los datos")
 		}
 
+		rows,_ := response.RowsAffected()
+			if rows == 0{
+				return fmt.Errorf("error no se actualizo ningun dato")
+			}
+
 		return err
+}
+
+func (r *MYSQLRepository) Get() ([]domain.User, error) {
+	query := "SELECT name, age, fech_nac FROM users"
+	rows, err := r.conn.DB.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []domain.User
+	for rows.Next() {
+		var user domain.User
+		err := rows.Scan(&user.Name, &user.Age, &user.Fech_nac)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	// Verificamos si hubo errores durante la iteración
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
 }
