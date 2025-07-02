@@ -4,34 +4,37 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"github.com/joho/godotenv"
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type Conn_MYSQL struct{
-	DB *sql.DB
+type Conn_MySQL struct {
+	DB  *sql.DB
 	Err string
 }
 
-func GetDBpool()*Conn_MYSQL{
+func GetDBPool() *Conn_MySQL {
+	_ = godotenv.Load()
+	// Obtener variables de entorno
+	dbHost := os.Getenv("DB_HOST")
+	dbUser := os.Getenv("DB_USER")
+	dbPass := os.Getenv("DB_PASS")
+	dbSchema := os.Getenv("DB_SCHEMA")
 
-	dbUser:="root"
-	dbPass:="l0p3z2005"
-	dbHost:="localhost"
-	dbSchema:="vitalvest"
-
-	dsm:= fmt.Sprintf("%s:%s@tcp(%s:3306)/%s",dbUser,dbPass,dbHost,dbSchema)
-
-	db,err:=sql.Open("mysql",dsm)
-	if err!=nil{
-		log.Fatal("error al abrir la BD",err)
-	}
-	db.SetMaxOpenConns(10) 
-
-	if err:=db.Ping();err!=nil{
-		log.Fatal("error ",err)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:3306)/%s", dbUser, dbPass, dbHost, dbSchema)
+	db, err := sql.Open("mysql", dsn)
+	if err != nil {
+		log.Fatalf("Error al abrir la base de datos: %v", err)
 	}
 
-	return &Conn_MYSQL{DB:db}
+	// Configuración del pool de conexiones
+	db.SetMaxOpenConns(10)
+
+	// Verificar conexión
+	if err := db.Ping(); err != nil {
+		log.Fatalf("Error al verificar conexión: %v", err)
+	}
+
+	return &Conn_MySQL{DB: db}
 }
-
-
