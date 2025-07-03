@@ -18,7 +18,7 @@ func NewMysqlRepo()*MYSQLRepository{
 
 
 func(r *MYSQLRepository)Save(sesion domain.Sesion)error{
-	query:="INSERT INTO sesions(id_usuario,fech_creacion) VALUES(?,?)"
+	query:="INSERT INTO sesion(id_usuario,fech_creacion) VALUES(?,?)"
 	_,err:= r.conn.DB.Exec(query,&sesion.Id_usuario,&sesion.Fech_creacion)
 
 		if err!=nil{

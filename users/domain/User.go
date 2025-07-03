@@ -2,8 +2,7 @@ package domain
 
 
 type User struct{
-	Id int
-	Name string
-	Age int
-	Fech_nac string
+	Id int 
+	UserName string `json:"username"`
+	Passwords string `json:"password"`
 }
