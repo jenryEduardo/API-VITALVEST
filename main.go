@@ -11,6 +11,10 @@ import (
 
 	bme "API-VITALVEST/BME/infraestructure/http/routes"
 	dependenciesBME "API-VITALVEST/BME/infraestructure/dependencies"
+
+	mpu "API-VITALVEST/MPU/infraestructure/http/routes"
+	dependenciesMPU "API-VITALVEST/MPU/infraestructure/dependencies"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 )
@@ -36,6 +40,10 @@ func main(){
 	//BME
 	dependenciesBME.InitBME()
 	bme.RegisterBMEEndpoints(router)
+
+	//MPU
+	dependenciesMPU.InitMPU()
+	mpu.RegisterMPUEndpoints(router)
 
 	//USER
 	users.UserRoutes(router)
