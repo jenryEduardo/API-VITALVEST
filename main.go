@@ -8,6 +8,9 @@ import (
 
 	mlx "API-VITALVEST/MLX/infraestructure/http/routes"
 	dependenciesmlx "API-VITALVEST/MLX/infraestructure/dependencies"
+
+	bme "API-VITALVEST/BME/infraestructure/http/routes"
+	dependenciesBME "API-VITALVEST/BME/infraestructure/dependencies"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 )
@@ -30,6 +33,11 @@ func main(){
 	dependenciesmlx.InitMLX()
 	mlx.RegisterMLXEndpoints(router)
 
+	//BME
+	dependenciesBME.InitBME()
+	bme.RegisterBMEEndpoints(router)
+
+	//USER
 	users.UserRoutes(router)
 
 	port :=":8080"
