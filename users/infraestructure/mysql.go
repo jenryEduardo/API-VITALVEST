@@ -9,11 +9,11 @@ import (
 ) 
 
 type MYSQLRepository struct{
-	conn *core.Conn_MYSQL
+	conn *core.Conn_MySQL
 }
 
 func NewMysqlRepo()*MYSQLRepository{
-	conn := core.GetDBpool()
+	conn := core.GetDBPool()
 	return &MYSQLRepository{conn: conn}
 }
 
