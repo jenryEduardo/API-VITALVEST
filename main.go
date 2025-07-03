@@ -5,6 +5,9 @@ import (
 	"log"
 	gsr "API-VITALVEST/GSR/infraestructure/http/routes"
 	dependenciesGSR "API-VITALVEST/GSR/infraestructure/dependencies"
+
+	mlx "API-VITALVEST/MLX/infraestructure/http/routes"
+	dependenciesmlx "API-VITALVEST/MLX/infraestructure/dependencies"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 )
@@ -23,6 +26,9 @@ func main(){
 	dependenciesGSR.InitGSR()
 	gsr.RegisterGSREndpoints(router)
 
+	//MLX
+	dependenciesmlx.InitMLX()
+	mlx.RegisterMLXEndpoints(router)
 
 	users.UserRoutes(router)
 

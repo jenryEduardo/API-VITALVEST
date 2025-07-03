@@ -16,7 +16,7 @@ func InitGSR() {
 	if db == nil {
 		panic("Error: la conexión a la base de datos es nil")
 	}
-	mySQL = *infraestructure.NewMYSQLRepository(db.DB) // ⬅️ aquí es donde lo inicializas correctamente
+	mySQL = *infraestructure.NewMYSQLRepository(db.DB)
 }
 
 func NewSaveGSRController() *controllers.SaveGSRController {
