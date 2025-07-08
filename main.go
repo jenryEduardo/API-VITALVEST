@@ -15,6 +15,10 @@ import (
 	mpu "API-VITALVEST/MPU/infraestructure/http/routes"
 	dependenciesMPU "API-VITALVEST/MPU/infraestructure/dependencies"
 
+	wsAdapters "API-VITALVEST/WEBSOCKET/infraestructure/adapters"
+	wsControllers "API-VITALVEST/WEBSOCKET/infraestructure/controllers"
+	wsRoutes "API-VITALVEST/WEBSOCKET/infraestructure/routes"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 )
@@ -47,6 +51,12 @@ func main(){
 
 	//USER
 	users.UserRoutes(router)
+
+	//WEBSOCKET
+	wsSender := wsAdapters.NewWSSender()
+	go wsSender.Run()
+	wsController := wsControllers.NewWebSocketController(wsSender)
+	wsRoutes.RegisterWSEndpoints(router, wsController)
 
 	port :=":8080"
 	log.Println("Servidor corriendo en el puerto", port)
