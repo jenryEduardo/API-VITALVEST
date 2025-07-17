@@ -12,6 +12,8 @@ import (
 	mlx "API-VITALVEST/MLX/infraestructure/http/routes"
 	dependenciesMPU "API-VITALVEST/MPU/infraestructure/dependencies"
 	mpu "API-VITALVEST/MPU/infraestructure/http/routes"
+	dependenciesAlertas "API-VITALVEST/alertas/infraestructure/dependencies"
+	alertas "API-VITALVEST/alertas/infraestructure/http/routes"
 	// Rutas de sensores
 	users "API-VITALVEST/users/infraestructure/routes"
 
@@ -39,6 +41,7 @@ func main() {
 	dependenciesmlx.InitMLX()
 	dependenciesBME.InitBME()
 	dependenciesMPU.InitMPU()
+	dependenciesAlertas.InitAlerta()
 
 	// Registrar rutas de sensores
 	gsr.RegisterGSREndpoints(router)
@@ -46,6 +49,7 @@ func main() {
 	bme.RegisterBMEEndpoints(router)
 	mpu.RegisterMPUEndpoints(router)
 	users.UserRoutes(router)
+	alertas.RegisterAlertasEndpoints(router)
 
 	// Configurar WebSocket
 	wsServer := wsAdapters.NewWebSocketServer()
