@@ -17,6 +17,8 @@ import (
 	mpu "API-VITALVEST/MPU/infraestructure/http/routes"
 	dependenciesMPU "API-VITALVEST/MPU/infraestructure/dependencies"
 
+
+	session "API-VITALVEST/session/infraestructure/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
 )
@@ -50,7 +52,7 @@ func main(){
 	//USER
 	users.UserRoutes(router)
 	login.SetUpRoutes(router)
-
+	session.SetUproutesSession(router)
 	port :=":8080"
 	log.Println("Servidor corriendo en el puerto", port)
 	log.Fatal(router.Run(port))

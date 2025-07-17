@@ -11,6 +11,6 @@ func NewGetAll(repo domain.Isesion)*GetAllData{
 }
 
 
-func (r *GetAllData)Execute()([]domain.Session,error){
+func (r *GetAllData)Execute()([]domain.DataSession,error){
 	return r.repo.GetAll()
 }
