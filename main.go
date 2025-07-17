@@ -1,7 +1,6 @@
 package main
 
 import (
-	users "API-VITALVEST/users/infraestructure/routes"
 	login "API-VITALVEST/login/infraestructure/routes"
 	//sesiones "API-VITALVEST/sesion/infraestructure"
 	"log"
@@ -26,7 +25,6 @@ import (
 	session "API-VITALVEST/session/infraestructure/routes"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
 )
 
 func main() {
