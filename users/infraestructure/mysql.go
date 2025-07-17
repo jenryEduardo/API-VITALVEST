@@ -5,6 +5,7 @@ import (
 	"API-VITALVEST/users/domain"
 	"fmt"
 	"log"
+	 "golang.org/x/crypto/bcrypt"
 ) 
 
 type MYSQLRepository struct{
@@ -18,8 +19,15 @@ func NewMysqlRepo()*MYSQLRepository{
 
 func (r *MYSQLRepository)Save(user domain.User)error{
 
-	query:="INSERT INTO users(name,age,fech_nac) VALUES(?,?,?)"
-	_,err:=r.conn.DB.Exec(query,&user.Name,&user.Age,&user.Fech_nac)
+	query:="INSERT INTO users(username,passwords) VALUES(?,?)"
+
+	hash,errores :=bcrypt.GenerateFromPassword([]byte(user.Passwords),bcrypt.DefaultCost)
+
+	if errores!=nil{
+		fmt.Print("no se pudo realizar el hash")
+	}
+
+	_,err:=r.conn.DB.Exec(query,&user.UserName,&hash)
 	if err!=nil{
 		return err
 	}
@@ -40,9 +48,9 @@ return nil
 }
 
 func (r *MYSQLRepository)Update(user domain.User,id int)error{
-	query := "UPDATE users SET name=?, age=?, fech_nac=? WHERE id = ?"
+	query := "UPDATE users SET username=?,passwords=? WHERE id = ?"
 
-	response,err :=r.conn.DB.Exec(query,&user.Name,&user.Age,&user.Fech_nac,id)
+	response,err :=r.conn.DB.Exec(query,&user.UserName,&user.Passwords,id)
 
 
 		if err!=nil{
@@ -58,7 +66,7 @@ func (r *MYSQLRepository)Update(user domain.User,id int)error{
 }
 
 func (r *MYSQLRepository) Get() ([]domain.User, error) {
-	query := "SELECT name, age, fech_nac FROM users"
+	query := "SELECT id,username FROM users"
 	rows, err := r.conn.DB.Query(query)
 	if err != nil {
 		return nil, err
@@ -68,12 +76,12 @@ func (r *MYSQLRepository) Get() ([]domain.User, error) {
 	var users []domain.User
 	for rows.Next() {
 		var user domain.User
-		err := rows.Scan(&user.Name, &user.Age, &user.Fech_nac)
+		err := rows.Scan(&user.Id,&user.UserName)
 		if err != nil {
 			return nil, err
 		}
 		users = append(users, user)
-	}
+	}	
 
 	// Verificamos si hubo errores durante la iteración
 	if err = rows.Err(); err != nil {

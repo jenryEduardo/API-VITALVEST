@@ -1,6 +1,8 @@
 package main
 
 import (
+	login "API-VITALVEST/login/infraestructure/routes"
+	//sesiones "API-VITALVEST/sesion/infraestructure"
 	"log"
 	"net/http"
 
@@ -19,8 +21,10 @@ import (
 	wsAdapters "API-VITALVEST/WEBSOCKET/infraestructure/adapters"
 	wsControllers "API-VITALVEST/WEBSOCKET/infraestructure/controllers"
 
-	"github.com/gin-contrib/cors"
+
+	session "API-VITALVEST/session/infraestructure/routes"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 )
 
 func main() {
@@ -47,6 +51,10 @@ func main() {
 	mpu.RegisterMPUEndpoints(router)
 	users.UserRoutes(router)
 
+	login.SetUpRoutes(router)
+	session.SetUproutesSession(router)
+
+
 	// Configurar WebSocket
 	wsServer := wsAdapters.NewWebSocketServer()
 	go wsServer.Run()
@@ -68,7 +76,6 @@ func main() {
 	log.Println("📊 Status WebSocket: http://localhost:8080/ws-status")
 	log.Println("🔐 Login: http://localhost:8080/login")
 	log.Printf("🌐 Servidor corriendo en http://localhost%s", port)
-
 	log.Fatal(router.Run(port))
 }
 

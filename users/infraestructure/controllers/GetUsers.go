@@ -13,11 +13,11 @@ func GetUsers(c *gin.Context) {
 	repo := infraestructure.NewMysqlRepo()
 	use_case := application.NewGetUsers(repo)
 
-	data,err := use_case.Execute()
+	datos,err := use_case.Execute()
 
 		if err!=nil{
-			c.JSON(http.StatusBadGateway,gin.H{"error":"verifique la solicitud a la BD"})
+			c.JSON(http.StatusBadGateway,gin.H{"error":err})
 		}
 
-	c.JSON(http.StatusOK,data)
+	c.JSON(http.StatusOK,datos)
 }

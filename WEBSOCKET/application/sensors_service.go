@@ -14,5 +14,5 @@ func NewSensorService(wsController *controllers.WebSocketController) *SensorServ
 }
 
 func (s *SensorService) EnviarDatos(data domain.Sensors) error {
-	return s.WebSocketController.Server.SendData(data) 
+	return s.WebSocketController.SendData(data) 
 }
