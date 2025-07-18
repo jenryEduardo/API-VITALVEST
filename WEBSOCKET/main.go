@@ -1,23 +1,10 @@
 package main
 
 import (
-	dependenciesGSR "API-VITALVEST/GSR/infraestructure/dependencies"
-	gsr "API-VITALVEST/GSR/infraestructure/http/routes"
-	users "API-VITALVEST/users/infraestructure/routes"
-	"log"
-	"net/http"
-
-	dependenciesmlx "API-VITALVEST/MLX/infraestructure/dependencies"
-	mlx "API-VITALVEST/MLX/infraestructure/http/routes"
-
-	dependenciesBME "API-VITALVEST/BME/infraestructure/dependencies"
-	bme "API-VITALVEST/BME/infraestructure/http/routes"
-
-	dependenciesMPU "API-VITALVEST/MPU/infraestructure/dependencies"
-	mpu "API-VITALVEST/MPU/infraestructure/http/routes"
-
 	wsAdapters "API-VITALVEST/WEBSOCKET/infraestructure/adapters"
 	wsControllers "API-VITALVEST/WEBSOCKET/infraestructure/controllers"
+	"log"
+	"net/http"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -33,24 +20,6 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	// GSR
-	dependenciesGSR.InitGSR()
-	gsr.RegisterGSREndpoints(router)
-
-	//MLX
-	dependenciesmlx.InitMLX()
-	mlx.RegisterMLXEndpoints(router)
-
-	//BME
-	dependenciesBME.InitBME()
-	bme.RegisterBMEEndpoints(router)
-
-	//MPU
-	dependenciesMPU.InitMPU()
-	mpu.RegisterMPUEndpoints(router)
-
-	//USER
-	users.UserRoutes(router)
 
 	//WEBSOCKET
 	wsServer := wsAdapters.NewWebSocketServer()
