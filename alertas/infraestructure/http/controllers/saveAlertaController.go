@@ -23,7 +23,7 @@ func (ctrl *SaveAlertaController) Run(c *gin.Context) {
 	if err := c.ShouldBindJSON(&alerta); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Todos los campos son requeridos o inválidos"})
 		return
-	}
+	}	
 
 	// Validar sensor permitido
 	if err := alerta.Validar(); err != nil {
@@ -41,6 +41,7 @@ func (ctrl *SaveAlertaController) Run(c *gin.Context) {
 		return
 	}
 
+
 	c.JSON(http.StatusCreated, gin.H{
 		"status": true,
 		"data": gin.H{
@@ -53,4 +54,5 @@ func (ctrl *SaveAlertaController) Run(c *gin.Context) {
 			},
 		},
 	})
+
 }
