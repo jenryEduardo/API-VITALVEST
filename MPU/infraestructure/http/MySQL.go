@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-) 
+)
 
 type MYSQLRepository struct {
 	db *sql.DB
@@ -15,28 +15,33 @@ func NewMYSQLRepository(db *sql.DB) *MYSQLRepository {
 	return &MYSQLRepository{db: db}
 }
 
-func (r *MYSQLRepository) Save(MPU domain.Mpu) error {
-	query := "INSERT INTO mpu (aceleracion_x, aceleracion_y, aceleracion_z, pasos, nivel_actividad) VALUES (?, ?, ?, ?, ?)"
-	_, err := r.db.Exec(query, MPU.Aceleracion_x, MPU.Aceleracion_y, MPU.Aceleracion_z, MPU.Pasos, MPU.Nivel_actividad)
+// Guarda un nuevo registro en la tabla mpu
+func (r *MYSQLRepository) Save(mpu domain.Mpu) error {
+	query := `INSERT INTO mpu (aceleracion_x, aceleracion_y, aceleracion_z, pasos, nivel_actividad) VALUES (?, ?, ?, ?, ?)`
+	_, err := r.db.Exec(query,
+		mpu.Mpu6050.Aceleracion.X,
+		mpu.Mpu6050.Aceleracion.Y,
+		mpu.Mpu6050.Aceleracion.Z,
+		mpu.Pasos,
+		mpu.NivelActividad,
+	)
 	return err
 }
 
-func (r *MYSQLRepository) DeleteByID(id int) error {
-	query := "DELETE FROM mpu WHERE id = ?"
-	_, err := r.db.Exec(query, id)
-	if err != nil {
-		log.Println("no se pudo eliminar el sensor MPU, verifique el id o la sintaxis sql:", err)
-		return err
-	}
-	return nil
-}
-
-func (r *MYSQLRepository) UpdateByID(id int, MPU domain.Mpu) error {
-	query := "UPDATE mpu SET aceleracion_x=?, aceleracion_y=?, aceleracion_z=?, pasos=?, nivel_actividad=? WHERE id = ?"
-	result, err := r.db.Exec(query, MPU.Aceleracion_x, MPU.Aceleracion_y,MPU.Aceleracion_z,MPU.Pasos, MPU.Nivel_actividad, id)
+// Actualiza un registro por id
+func (r *MYSQLRepository) UpdateByID(id int, mpu domain.Mpu) error {
+	query := `UPDATE mpu SET aceleracion_x=?, aceleracion_y=?, aceleracion_z=?, pasos=?, nivel_actividad=? WHERE id = ?`
+	result, err := r.db.Exec(query,
+		mpu.Mpu6050.Aceleracion.X,
+		mpu.Mpu6050.Aceleracion.Y,
+		mpu.Mpu6050.Aceleracion.Z,
+		mpu.Pasos,
+		mpu.NivelActividad,
+		id,
+	)
 
 	if err != nil {
-		log.Println("no se pudo actualizar el dato, verifique la sintaxis o los datos:", err)
+		log.Println("No se pudo actualizar el dato, verifique la sintaxis o los datos:", err)
 		return err
 	}
 
@@ -48,8 +53,20 @@ func (r *MYSQLRepository) UpdateByID(id int, MPU domain.Mpu) error {
 	return nil
 }
 
+// Elimina un registro por id
+func (r *MYSQLRepository) DeleteByID(id int) error {
+	query := `DELETE FROM mpu WHERE id = ?`
+	_, err := r.db.Exec(query, id)
+	if err != nil {
+		log.Println("No se pudo eliminar el sensor MPU, verifique el id o la sintaxis SQL:", err)
+		return err
+	}
+	return nil
+}
+
+// Obtiene todos los registros
 func (r *MYSQLRepository) FindAll() ([]domain.Mpu, error) {
-	query := "SELECT aceleracion_x, aceleracion_y, aceleracion_z, pasos, nivel_actividad FROM mpu"
+	query := `SELECT id, aceleracion_x, aceleracion_y, aceleracion_z, pasos, nivel_actividad FROM mpu`
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -58,19 +75,20 @@ func (r *MYSQLRepository) FindAll() ([]domain.Mpu, error) {
 
 	var MPUs []domain.Mpu
 	for rows.Next() {
-		var MPU domain.Mpu
-		err := rows.Scan(&MPU.Aceleracion_x, &MPU.Aceleracion_y, &MPU.Aceleracion_z, &MPU.Pasos, &MPU.Nivel_actividad)
+		var m domain.Mpu
+		err := rows.Scan(&m.Id, &m.Mpu6050.Aceleracion.X, &m.Mpu6050.Aceleracion.Y, &m.Mpu6050.Aceleracion.Z, &m.Pasos, &m.NivelActividad)
 		if err != nil {
 			return nil, err
 		}
-		MPUs = append(MPUs, MPU)
+		MPUs = append(MPUs, m)
 	}
 
 	return MPUs, rows.Err()
 }
 
+// Obtiene registros por id (aunque suele ser solo uno, retorna slice por consistencia)
 func (r *MYSQLRepository) FindByID(id int) ([]domain.Mpu, error) {
-	query := "SELECT * FROM mpu WHERE id = ?"
+	query := `SELECT id, aceleracion_x, aceleracion_y, aceleracion_z, pasos, nivel_actividad FROM mpu WHERE id = ?`
 	rows, err := r.db.Query(query, id)
 	if err != nil {
 		return nil, err
@@ -79,12 +97,12 @@ func (r *MYSQLRepository) FindByID(id int) ([]domain.Mpu, error) {
 
 	var MPUs []domain.Mpu
 	for rows.Next() {
-		var MPU domain.Mpu
-		err := rows.Scan(&MPU.Aceleracion_x, &MPU.Aceleracion_y, &MPU.Aceleracion_z, &MPU.Pasos, &MPU.Nivel_actividad)
+		var m domain.Mpu
+		err := rows.Scan(&m.Id, &m.Mpu6050.Aceleracion.X, &m.Mpu6050.Aceleracion.Y, &m.Mpu6050.Aceleracion.Z, &m.Pasos, &m.NivelActividad)
 		if err != nil {
 			return nil, err
 		}
-		MPUs = append(MPUs, MPU)
+		MPUs = append(MPUs, m)
 	}
 
 	return MPUs, rows.Err()

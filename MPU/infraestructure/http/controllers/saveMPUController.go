@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"API-VITALVEST/MPU/application"
+	"API-VITALVEST/MPU/infraestructure/control"
+
 	"API-VITALVEST/MPU/domain"
 	"net/http"
 
@@ -17,31 +19,40 @@ func NewSaveMPUController(uc *application.SaveMPU_UC) *SaveMPUController {
 }
 
 func (ctrl *SaveMPUController) Run(c *gin.Context) {
-	var MPU domain.Mpu
+	var input struct {
+		Mpu6050 domain.Mpu6050 `json:"mpu6050"`
+	}
 
-	if err := c.ShouldBindJSON(&MPU); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Todos los campos son requeridos"})
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos inválidos o incompletos"})
 		return
-	} 
+	}
 
-	err := ctrl.uc.Run(MPU)
+	// Calcular pasos y nivel con aceleracion recibida
+	pasos, nivel := control.ConvertirDatosEnPasos(input.Mpu6050.Aceleracion.X, input.Mpu6050.Aceleracion.Y, input.Mpu6050.Aceleracion.Z)
 
+	// Crear objeto para guardar
+	mpu := domain.Mpu{
+		Mpu6050:       input.Mpu6050,
+		Pasos:         pasos,
+		NivelActividad: nivel,
+	}
+
+	err := ctrl.uc.Run(mpu)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-	} else {
-		c.JSON(http.StatusCreated, gin.H{
-			"status": true,
-			"data": gin.H{
-				"type": "MPU",
-				"attributes": gin.H{
-					"Id del sensor MPU6050": MPU.Id,
-					"aceleración X": MPU.Aceleracion_x,
-					"Aceleración Y": MPU.Aceleracion_y,
-					"Aceleración Z": MPU.Aceleracion_z,
-					"Pasos": MPU.Pasos,
-					"Nivel de actividad": MPU.Nivel_actividad,
-				},
-			},
-		})
+		return
 	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"status": true,
+		"data": gin.H{
+			"type": "MPU",
+			"attributes": gin.H{
+				"mpu6050":        mpu.Mpu6050,
+				"pasos":          mpu.Pasos,
+				"nivel_actividad": mpu.NivelActividad,
+			},
+		},
+	})
 }
