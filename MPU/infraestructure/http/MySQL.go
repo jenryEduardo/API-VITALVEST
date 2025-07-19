@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"time"
 )
 
 type MYSQLRepository struct {
@@ -17,13 +18,15 @@ func NewMYSQLRepository(db *sql.DB) *MYSQLRepository {
 
 // Guarda un nuevo registro en la tabla mpu
 func (r *MYSQLRepository) Save(mpu domain.Mpu) error {
-	query := `INSERT INTO mpu (aceleracion_x, aceleracion_y, aceleracion_z, pasos, nivel_actividad) VALUES (?, ?, ?, ?, ?)`
+	tiempo := time.Now()
+	query := `INSERT INTO mpu (aceleracion_x, aceleracion_y, aceleracion_z, pasos, nivel_actividad,fecha) VALUES (?, ?, ?, ?, ?, ?)`
 	_, err := r.db.Exec(query,
 		mpu.Mpu6050.Aceleracion.X,
 		mpu.Mpu6050.Aceleracion.Y,
 		mpu.Mpu6050.Aceleracion.Z,
 		mpu.Pasos,
 		mpu.NivelActividad,
+		tiempo,
 	)
 	return err
 }
@@ -66,7 +69,7 @@ func (r *MYSQLRepository) DeleteByID(id int) error {
 
 // Obtiene todos los registros
 func (r *MYSQLRepository) FindAll() ([]domain.Mpu, error) {
-	query := `SELECT id, aceleracion_x, aceleracion_y, aceleracion_z, pasos, nivel_actividad FROM mpu`
+	query := `SELECT id, pasos, nivel_actividad,fecha FROM mpu`
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -76,7 +79,7 @@ func (r *MYSQLRepository) FindAll() ([]domain.Mpu, error) {
 	var MPUs []domain.Mpu
 	for rows.Next() {
 		var m domain.Mpu
-		err := rows.Scan(&m.Id, &m.Mpu6050.Aceleracion.X, &m.Mpu6050.Aceleracion.Y, &m.Mpu6050.Aceleracion.Z, &m.Pasos, &m.NivelActividad)
+		err := rows.Scan(&m.Id, &m.Pasos, &m.NivelActividad,&m.Fecha)
 		if err != nil {
 			return nil, err
 		}

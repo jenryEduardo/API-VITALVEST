@@ -69,7 +69,7 @@ func main() {
 	router.POST("/login", handleLogin)
 
 	// Información del servidor
-	port := ":8080"
+	port := ":8082"
 	log.Println("🚀 Servidor VitalVest iniciado")
 	log.Println("📡 WebSocket disponible en ws://localhost:8080/ws")
 	log.Println("📤 Endpoint sendData: http://localhost:8080/sendData")

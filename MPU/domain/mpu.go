@@ -17,4 +17,5 @@ type Mpu struct {
 	Mpu6050 Mpu6050 `json:"mpu6050"`
 	Pasos  int    `json:"pasos"`
 	NivelActividad string `json:"nivel_actividad"`
+	Fecha  string `json:"fecha"`
 }
