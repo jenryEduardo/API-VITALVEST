@@ -21,7 +21,7 @@ func InitAlerta() {
 
 func NewSaveAlertaController() *controllers.SaveAlertaController {
 
-	notifier := infraestructure.NewWSNotifier("ws://localhost:3000/ws")
+	notifier := infraestructure.NewWSNotifier("ws://localhost:8080/ws")
 
 	useCase := application.NewSaveAlerta_UC(&mySQL, notifier)
 	return controllers.NewSaveAlertaController(useCase)

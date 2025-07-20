@@ -7,5 +7,4 @@ type Iuser interface{
 	Delete(id int)error
 	Update(user User,id int)error
 	Get()([]User,error)
-	Login(name string) (*User, error)
 }
