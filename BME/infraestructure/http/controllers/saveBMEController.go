@@ -35,8 +35,9 @@ func (ctrl *SaveBMEController) Run(c *gin.Context) {
 				"type": "BME",
 				"attributes": gin.H{
 					"Id del sensor BME280": BME.Id,
-					"Temperatura ambiente": BME.Temperatura_ambiente,
-					"Humedad relativa (BME280)":BME.Humedad_relativa,
+					"Temperatura ambiente": BME.Temperatura,
+					"Humedad relativa (BME280)":BME.Humedad,
+					"Presión": BME.Presion,
 				},
 			},
 		})

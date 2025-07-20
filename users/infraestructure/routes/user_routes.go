@@ -12,9 +12,11 @@ func UserRoutes(router *gin.Engine) {
 
 	// Rutas protegidas
 	protected := router.Group("/users")
+	protected.POST("/", USERS.Create_user)
+
 	protected.Use(middleware.AuthMiddleware())
+
 	{
-		protected.POST("/", USERS.Create_user)
 		protected.GET("/", USERS.GetUsers)
 		protected.PUT("/:user_id", USERS.UpdateUser)
 		protected.DELETE("/:user_id", USERS.Delete)

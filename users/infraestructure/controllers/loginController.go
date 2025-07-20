@@ -12,26 +12,31 @@ import (
 
 func LoginController(c *gin.Context) {
 	var req domain.User
-	if err := c.ShouldBindJSON(&req); err != nil || req.Name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Nombre requerido"})
+
+	// Validar JSON y campos obligatorios
+	if err := c.ShouldBindJSON(&req); err != nil || req.UserName == "" || req.Passwords == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Usuario y contraseña requeridos"})
 		return
 	}
 
 	repo := infraestructure.NewMysqlRepo()
 	uc := application.NewLogin(repo)
 
-	user, err := uc.Execute(req.Name)
+	// Verifica username y password
+	user, err := uc.Execute(req.UserName, req.Passwords)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuario no encontrado"})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Credenciales inválidas"})
 		return
 	}
 
-	token, err := jwtservice.GenerateJWT(user.Id, user.Name)
+	// Generar JWT
+	token, err := jwtservice.GenerateJWT(user.Id, user.UserName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "No se pudo generar el token"})
 		return
 	}
 
+	// Respuesta
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,
 		"user":  user,

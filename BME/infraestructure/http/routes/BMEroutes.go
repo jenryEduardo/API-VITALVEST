@@ -8,7 +8,7 @@ import (
 
 func RegisterBMEEndpoints(router *gin.Engine) {
 	bme := router.Group("/bme")
-	bme.Use(middleware.AuthMiddleware()) // ← Protege todas las rutas BME
+	bme.Use(middleware.AuthMiddleware()) 
 	{
 		bme.POST("", dependencies.NewSaveBMEController().Run)
 		bme.GET("", dependencies.NewFindAllBMEController().Run)

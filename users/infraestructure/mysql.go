@@ -18,23 +18,21 @@ func NewMysqlRepo() *MYSQLRepository {
 }
 
 func (r *MYSQLRepository) Save(user domain.User) error {
+	query := "INSERT INTO users(username, password) VALUES (?, ?)"
 
-	query := "INSERT INTO users(username,passwords) VALUES(?,?)"
-
-	hash, errores := bcrypt.GenerateFromPassword([]byte(user.Passwords), bcrypt.DefaultCost)
-
-	if errores != nil {
-		fmt.Print("no se pudo realizar el hash")
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Passwords), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("no se pudo hashear la contraseña: %w", err)
 	}
 
-	_, err := r.conn.DB.Exec(query, &user.UserName, &hash)
+	_, err = r.conn.DB.Exec(query, user.UserName, hash)
 	if err != nil {
-		return err
+		return fmt.Errorf("error al guardar el usuario: %w", err)
 	}
 
 	return nil
-
 }
+
 
 func (r *MYSQLRepository) Delete(id int) error {
 
@@ -48,24 +46,29 @@ func (r *MYSQLRepository) Delete(id int) error {
 }
 
 func (r *MYSQLRepository) Update(user domain.User, id int) error {
-	query := "UPDATE users SET username=?,passwords=? WHERE id = ?"
+	query := "UPDATE users SET username = ?, password = ? WHERE id = ?"
 
-	response, err := r.conn.DB.Exec(query, &user.UserName, &user.Passwords, id)
-
+	hash, err := bcrypt.GenerateFromPassword([]byte(user.Passwords), bcrypt.DefaultCost)
 	if err != nil {
-		fmt.Println("no se pudo actualizar el dato verifique el sinstaxis o los datos")
+		return fmt.Errorf("no se pudo hashear la nueva contraseña: %w", err)
 	}
 
-	rows, _ := response.RowsAffected()
+	result, err := r.conn.DB.Exec(query, user.UserName, hash, id)
+	if err != nil {
+		return fmt.Errorf("no se pudo actualizar el usuario: %w", err)
+	}
+
+	rows, _ := result.RowsAffected()
 	if rows == 0 {
-		return fmt.Errorf("error no se actualizo ningun dato")
+		return fmt.Errorf("no se actualizó ningún usuario")
 	}
 
-	return err
+	return nil
 }
 
+
 func (r *MYSQLRepository) Get() ([]domain.User, error) {
-	query := "SELECT id,username FROM users"
+	query := "SELECT id, username FROM users"
 	rows, err := r.conn.DB.Query(query)
 	if err != nil {
 		return nil, err
@@ -82,7 +85,6 @@ func (r *MYSQLRepository) Get() ([]domain.User, error) {
 		users = append(users, user)
 	}
 
-	// Verificamos si hubo errores durante la iteración
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
@@ -90,15 +92,22 @@ func (r *MYSQLRepository) Get() ([]domain.User, error) {
 	return users, nil
 }
 
-func (r *MYSQLRepository) Login(name string) (*domain.User, error) {
-	query := "SELECT id, username FROM users WHERE username = ? LIMIT 1"
-	row := r.conn.DB.QueryRow(query, name)
+
+func (r *MYSQLRepository) Login(username, password string) (*domain.User, error) {
+	query := "SELECT id, username, password FROM users WHERE username = ? LIMIT 1"
+	row := r.conn.DB.QueryRow(query, username)
 
 	var user domain.User
-	err := row.Scan(&user.Id, &user.UserName)
+	err := row.Scan(&user.Id, &user.UserName, &user.Passwords)
 	if err != nil {
 		return nil, fmt.Errorf("usuario no encontrado: %w", err)
 	}
 
+	err = bcrypt.CompareHashAndPassword([]byte(user.Passwords), []byte(password))
+	if err != nil {
+		return nil, fmt.Errorf("contraseña incorrecta")
+	}
+
 	return &user, nil
 }
+

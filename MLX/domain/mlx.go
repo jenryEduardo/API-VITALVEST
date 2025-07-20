@@ -2,5 +2,6 @@ package domain
 
 type Mlx struct {
 	Id int `json:"id"` 
-	Temperatura_corporal float64 `json:"temperatura_corporal"`
+	TemperaturaAmbiente float64 `json:"temperatura_ambiente"`
+	TemperaturaObjeto float64 `json:"temperatura_objeto"`
 }

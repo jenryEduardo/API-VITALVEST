@@ -16,8 +16,8 @@ func NewMYSQLRepository(db *sql.DB) *MYSQLRepository {
 }
 
 func (r *MYSQLRepository) Save(BME domain.Bme) error {
-	query := "INSERT INTO bme (temperatura_ambiente, humedad_relativa) VALUES (?, ?)"
-	_, err := r.db.Exec(query, BME.Temperatura_ambiente, BME.Humedad_relativa)
+	query := "INSERT INTO bme (temperatura, humedad, presion) VALUES (?, ?, ?)"
+	_, err := r.db.Exec(query, BME.Temperatura, BME.Humedad, BME.Presion)
 	return err
 }
 
@@ -32,8 +32,8 @@ func (r *MYSQLRepository) DeleteByID(id int) error {
 }
 
 func (r *MYSQLRepository) UpdateByID(id int, BME domain.Bme) error {
-	query := "UPDATE bme SET temperatura_ambiente=?, humedad_relativa=? WHERE id = ?"
-	result, err := r.db.Exec(query, BME.Temperatura_ambiente, BME.Humedad_relativa, id)
+	query := "UPDATE bme SET temperatura=?, humedad=?, presion=?WHERE id = ?"
+	result, err := r.db.Exec(query,BME.Temperatura, BME.Humedad, BME.Presion, id)
 
 	if err != nil {
 		log.Println("no se pudo actualizar el dato, verifique la sintaxis o los datos:", err)
@@ -49,7 +49,7 @@ func (r *MYSQLRepository) UpdateByID(id int, BME domain.Bme) error {
 }
 
 func (r *MYSQLRepository) FindAll() ([]domain.Bme, error) {
-	query := "SELECT temperatura_ambiente, humedad_relativa FROM bme"
+	query := "SELECT temperatura, humedad, presion FROM bme"
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (r *MYSQLRepository) FindAll() ([]domain.Bme, error) {
 	var BMEs []domain.Bme
 	for rows.Next() {
 		var BME domain.Bme
-		err := rows.Scan(&BME.Temperatura_ambiente, &BME.Humedad_relativa)
+		err := rows.Scan(&BME.Temperatura, &BME.Humedad, &BME.Presion)
 		if err != nil {
 			return nil, err
 		}
@@ -70,7 +70,7 @@ func (r *MYSQLRepository) FindAll() ([]domain.Bme, error) {
 }
 
 func (r *MYSQLRepository) FindByID(id int) ([]domain.Bme, error) {
-	query := "SELECT temperatura_ambiente, humedad_relativa FROM bme WHERE id = ?"
+	query := "SELECT temperatura, humedad, presion FROM bme WHERE id = ?"
 	rows, err := r.db.Query(query, id)
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func (r *MYSQLRepository) FindByID(id int) ([]domain.Bme, error) {
 	var BMEs []domain.Bme
 	for rows.Next() {
 		var BME domain.Bme
-		err := rows.Scan(&BME.Temperatura_ambiente, &BME.Humedad_relativa)
+		err := rows.Scan(&BME.Temperatura, &BME.Humedad, &BME.Presion)
 		if err != nil {
 			return nil, err
 		}

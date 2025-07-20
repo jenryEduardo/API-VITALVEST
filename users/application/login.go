@@ -10,6 +10,6 @@ func NewLogin(repo domain.Iuser) *Login {
 	return &Login{repo: repo}
 }
 
-func(c *Login) Execute(name string) (*domain.User, error){
-	return c.repo.Login(name)
+func(c *Login) Execute(username, password string) (*domain.User, error){
+	return c.repo.Login(username, password)
 }
