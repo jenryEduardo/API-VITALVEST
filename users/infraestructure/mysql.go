@@ -4,6 +4,7 @@ import (
 	"API-VITALVEST/core"
 	"API-VITALVEST/users/domain"
 	"fmt"
+	"log"
 ) 
 
 type MYSQLRepository struct{
@@ -23,7 +24,7 @@ func (r *MYSQLRepository)Save(user domain.User)error{
 		return err
 	}
 
-	return nil 
+	return err
 
 }
 
@@ -31,9 +32,9 @@ func (r *MYSQLRepository)Delete(id int)error{
 
 	query := "DELETE FROM users WHERE id = ?"
 	_,err:=r.conn.DB.Exec(query,id)
-	if err != nil {
-		return fmt.Errorf("no se pudo eliminar al usuario: %w", err)
-	}
+		if err!=nil{
+			log.Fatal("no se pudo eliminar al usuario verifique el id o la siintaxis sql")
+		}
 
 return nil
 }
@@ -80,17 +81,4 @@ func (r *MYSQLRepository) Get() ([]domain.User, error) {
 	}
 
 	return users, nil
-}
-
-func (r *MYSQLRepository) Login(name string) (*domain.User, error) {
-	query := "SELECT id, name, age, fech_nac FROM users WHERE name = ? LIMIT 1"
-	row := r.conn.DB.QueryRow(query, name)
-
-	var user domain.User
-	err := row.Scan(&user.Id, &user.Name, &user.Age, &user.Fech_nac)
-	if err != nil {
-		return nil, fmt.Errorf("usuario no encontrado: %w", err)
-	}
-
-	return &user, nil
 }
