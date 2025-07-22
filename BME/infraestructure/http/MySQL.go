@@ -16,7 +16,7 @@ func NewMYSQLRepository(db *sql.DB) *MYSQLRepository {
 }
 
 func (r *MYSQLRepository) Save(BME domain.Bme) error {
-	query := "INSERT INTO bme (temperatura, humedad, presion) VALUES (?, ?, ?)"
+	query := "INSERT INTO bme (temperatura_ambiente, presion,humedad) VALUES (?, ?, ?)"
 	_, err := r.db.Exec(query, BME.Temperatura, BME.Humedad, BME.Presion)
 	return err
 }
