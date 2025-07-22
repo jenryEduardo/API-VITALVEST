@@ -16,7 +16,7 @@ func Create_user(r *gin.Context) {
 
 	if err := r.ShouldBindJSON(&User); err != nil {
 		log.Println("error", err)
-		r.JSON(http.StatusBadRequest, gin.H{"error": "no se pudo crrear el usuario"})
+		r.JSON(http.StatusBadRequest, gin.H{"error": "no se pudo crear el usuario"})
 	}
 
 	repo := infraestructure.NewMysqlRepo()
@@ -24,6 +24,7 @@ func Create_user(r *gin.Context) {
 
 	if err := UseCase.Execute(User); err != nil {
 		r.JSON(http.StatusNotAcceptable, gin.H{"error": "la longitud de los datos es mas grande o los datos son incorrectos"})
+		log.Println("Error:", err)
 		return
 	}
 

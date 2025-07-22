@@ -35,7 +35,8 @@ func (ctrl *SaveMLXController) Run(c *gin.Context) {
 				"type": "MLX",
 				"attributes": gin.H{
 					"ID del sensor de MLX": mlx.Id,
-					"Temperatura corporal":mlx.Temperatura_corporal,
+					"Temperatura ambiente":mlx.TemperaturaAmbiente,
+					"Temperatura objeto": mlx.TemperaturaObjeto,
 				},
 			},
 		})
