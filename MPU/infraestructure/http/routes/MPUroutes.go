@@ -8,9 +8,10 @@ import (
 
 func RegisterMPUEndpoints(router *gin.Engine) {
 	mpu := router.Group("/mpu")
+	mpu.POST("", dependencies.NewSaveMPUController().Run)
 	mpu.Use(middleware.AuthMiddleware())
 	{
-		mpu.POST("", dependencies.NewSaveMPUController().Run)
+		
 		mpu.GET("", dependencies.NewFindAllMPUController().Run)
 		mpu.GET("/:id", dependencies.NewFindByIDMPUController().Run)
 		mpu.PUT("/:id", dependencies.NewUpdateMPUController().Run)

@@ -13,7 +13,7 @@ func RegisterGSREndpoints(router *gin.Engine) {
 		gsr.POST("", dependencies.NewSaveGSRController().Run)
 		gsr.GET("", dependencies.NewFindAllGSRController().Run)
 		gsr.GET("/:id", dependencies.NewFindByIDGSRController().Run)
-		gsr.PUT("/:id", dependencies.NewUpdateGSRController().Run)
-		gsr.DELETE("/:id", dependencies.NewDeleteGSRController().Run)
+		gsr.PUT("/:id", dependencies.NewUpdateGSRController().Run)		
+		gsr.DELETE("/:id", dependencies.NewDeleteGSRController().Run)		
 	}
 }
