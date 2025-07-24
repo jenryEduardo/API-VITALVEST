@@ -18,7 +18,7 @@ func NewMysqlRepo() *MYSQLRepository {
 }
 
 func (r *MYSQLRepository) Save(user domain.User) error {
-	query := "INSERT INTO users(username, password) VALUES (?, ?)"
+	query := "INSERT INTO users(username, passwords) VALUES (?, ?)"
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Passwords), bcrypt.DefaultCost)
 	if err != nil {
@@ -46,7 +46,7 @@ func (r *MYSQLRepository) Delete(id int) error {
 }
 
 func (r *MYSQLRepository) Update(user domain.User, id int) error {
-	query := "UPDATE users SET username = ?, password = ? WHERE id = ?"
+	query := "UPDATE users SET username = ?, passwords = ? WHERE id = ?"
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Passwords), bcrypt.DefaultCost)
 	if err != nil {
@@ -94,7 +94,7 @@ func (r *MYSQLRepository) Get() ([]domain.User, error) {
 
 
 func (r *MYSQLRepository) Login(username, password string) (*domain.User, error) {
-	query := "SELECT id, username, password FROM users WHERE username = ? LIMIT 1"
+	query := "SELECT id, username, passwords FROM users WHERE username = ? LIMIT 1"
 	row := r.conn.DB.QueryRow(query, username)
 
 	var user domain.User
