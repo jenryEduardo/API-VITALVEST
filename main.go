@@ -1,7 +1,7 @@
 package main
 
 import (
-	login "API-VITALVEST/login/infraestructure/routes"
+	// login "API-VITALVEST/login/infraestructure/routes"
 	//sesiones "API-VITALVEST/sesion/infraestructure"
 	"log"
 
@@ -52,7 +52,7 @@ func main() {
 	mpu.RegisterMPUEndpoints(router)
 	users.UserRoutes(router)
 
-	login.SetUpRoutes(router)
+	// login.SetUpRoutes(router)
 	session.SetUproutesSession(router)
 	alertas.RegisterAlertasEndpoints(router)
 
