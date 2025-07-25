@@ -16,10 +16,10 @@ func NewGetAllMPUController(uc *application.GetAllMPU_UC) *GetAllMPUController{
 }
 
 func (ctrl *GetAllMPUController) Run(c *gin.Context) {
-	MPUs, err := ctrl.uc.Run()
+	total, err := ctrl.uc.Run()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Todos los campos son requeridos"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"MPU" : MPUs})
+	c.JSON(http.StatusOK, gin.H{"pasos":total})
 }

@@ -60,25 +60,27 @@ func (r *MYSQLRepository) DeleteByID(id int) error {
 }
 
 // Obtiene todos los registros
-func (r *MYSQLRepository) FindAll() ([]domain.Mpu, error) {
+func (r *MYSQLRepository) FindAll() (int, error) {
 	query := `SELECT id, pasos,fecha FROM mpu`
 	rows, err := r.db.Query(query)
 	if err != nil {
-		return nil, err
+		return 0,err
 	}
 	defer rows.Close()
 
 	var MPUs []domain.Mpu
+	    TotalP:=0
 	for rows.Next() {
 		var m domain.Mpu
 		err := rows.Scan(&m.Id, &m.Pasos,&m.Fecha)
 		if err != nil {
-			return nil, err
+			return 0, err
 		}
+		 TotalP+=m.Pasos
 		MPUs = append(MPUs, m)
 	}
 
-	return MPUs, rows.Err()
+	return TotalP,rows.Err()
 }
 
 // Obtiene registros por id (aunque suele ser solo uno, retorna slice por consistencia)
