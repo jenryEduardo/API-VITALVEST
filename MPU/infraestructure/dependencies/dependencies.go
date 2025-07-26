@@ -39,6 +39,11 @@ func NewFindAllMPUController() *controllers.GetAllMPUController {
 	return controllers.NewGetAllMPUController(useCase)
 }
 
+func NewGetAllTableMPUController() *controllers.GetAllTableMPU_Controller {
+	useCase := application.NewGetMPU_UC(&mySQL)
+	return controllers.NewGetAllTableMpuController(useCase)
+}
+
 func NewFindByIDMPUController() *controllers.GetMPUbyIDController {
 	useCase := application.NewGetMPUbyID(&mySQL)
 	return controllers.NewGetMPUbyIDController(useCase)

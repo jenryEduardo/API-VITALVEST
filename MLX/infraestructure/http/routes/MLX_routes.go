@@ -9,10 +9,11 @@ import (
 func RegisterMLXEndpoints(router *gin.Engine) {
 	mlx := router.Group("/mlx")
 	mlx.POST("", dependencies.NewSaveMLXController().Run)
+	mlx.GET("", dependencies.NewFindAllMLXController().Run)
 	mlx.Use(middleware.AuthMiddleware())
 	{
 		
-		mlx.GET("", dependencies.NewFindAllMLXController().Run)
+		
 		mlx.GET("/:id", dependencies.NewFindByIDMLXController().Run)
 		mlx.PUT("/:id", dependencies.NewUpdateMLXController().Run)
 		mlx.DELETE("/:id", dependencies.NewDeleteMLXController().Run)

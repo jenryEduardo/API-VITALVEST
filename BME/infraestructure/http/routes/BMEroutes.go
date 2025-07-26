@@ -9,9 +9,9 @@ import (
 func RegisterBMEEndpoints(router *gin.Engine) {
 	bme := router.Group("/bme")
 	bme.POST("", dependencies.NewSaveBMEController().Run)
+	bme.GET("", dependencies.NewFindAllBMEController().Run)
 	bme.Use(middleware.AuthMiddleware()) 
-	{
-		bme.GET("", dependencies.NewFindAllBMEController().Run)
+	{	
 		bme.GET("/:id", dependencies.NewFindByIDBMEController().Run)
 		bme.PUT("/:id", dependencies.NewUpdateBMEController().Run)
 		bme.DELETE("/:id", dependencies.NewDeleteBMEController().Run)

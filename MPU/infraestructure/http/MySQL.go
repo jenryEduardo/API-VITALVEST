@@ -83,6 +83,27 @@ func (r *MYSQLRepository) FindAll() (int, error) {
 	return TotalP,rows.Err()
 }
 
+func (r *MYSQLRepository) GetAll() ([]domain.Mpu, error) {
+	query := "SELECT pasos, fecha FROM mpu"
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var mpus []domain.Mpu
+	for rows.Next() {
+		var Mpu domain.Mpu
+		err := rows.Scan(&Mpu.Pasos, &Mpu.Fecha)
+		if err != nil {
+			return nil, err
+		}
+		mpus = append(mpus, Mpu)
+	}
+
+	return mpus, rows.Err()
+}
+
 // Obtiene registros por id (aunque suele ser solo uno, retorna slice por consistencia)
 func (r *MYSQLRepository) FindByID(id int) ([]domain.Mpu, error) {
 	query := `SELECT id, pasos, fecha FROM mpu WHERE id = ?`
