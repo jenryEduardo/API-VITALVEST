@@ -61,9 +61,9 @@ func (r *MYSQLRepository) DeleteByID(id int) error {
 
 // Obtiene todos los registros
 func (r *MYSQLRepository) FindAll() (int, []string,error) {
-	dia := time.Now()
-	query := `SELECT id, pasos,fecha FROM mpu WHERE fecha = ?`
-	rows, err := r.db.Query(query,dia)
+	
+	query := `SELECT id, pasos,fecha FROM mpu`
+	rows, err := r.db.Query(query)
 	if err != nil {
 		return 0,nil,err
 	}
