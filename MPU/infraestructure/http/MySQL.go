@@ -60,29 +60,36 @@ func (r *MYSQLRepository) DeleteByID(id int) error {
 }
 
 // Obtiene todos los registros
-func (r *MYSQLRepository) FindAll() (int, []domain.Mpu,error) {
-	
-	query := `SELECT id, pasos,fecha FROM mpu`
-	rows, err := r.db.Query(query)
-	if err != nil {
-		return 0,nil,err
-	}
-	defer rows.Close()
-	
-	var MPUs []domain.Mpu
-	    TotalP:=0
-	for rows.Next() {
-		var m domain.Mpu
-		err := rows.Scan(&m.Id, &m.Pasos,&m.Fecha)
-		if err != nil {
-			return 0, nil, err
-		}
-		 TotalP+=m.Pasos
 
-		MPUs = append(MPUs, m)
-	}
-
-	return TotalP,MPUs,rows.Err()
+func (r *MYSQLRepository) FindAll() ([]domain.Mpu, error) {
+    query := `
+        SELECT DATE(fecha) as fecha, SUM(pasos) as total_pasos
+        FROM mpu
+        GROUP BY DATE(fecha)
+        ORDER BY DATE(fecha) DESC`
+    
+    rows, err := r.db.Query(query)
+    if err != nil {
+        return nil, err
+    }
+    defer rows.Close()
+    
+    var MPUs []domain.Mpu
+    for rows.Next() {
+        var m domain.Mpu
+        // Assuming domain.Mpu has Fecha (time.Time or string) and Pasos (int)
+        err := rows.Scan(&m.Fecha, &m.Pasos)
+        if err != nil {
+            return nil, err
+        }
+        MPUs = append(MPUs, m)
+    }
+    
+    if err := rows.Err(); err != nil {
+        return nil, err
+    }
+    
+    return MPUs, nil
 }
 
 func (r *MYSQLRepository) GetAll() ([]domain.Mpu, error) {
