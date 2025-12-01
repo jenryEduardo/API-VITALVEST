@@ -18,14 +18,14 @@ func NewMysqlRepo() *MYSQLRepository {
 }
 
 func (r *MYSQLRepository) Save(user domain.User) error {
-	query := "INSERT INTO users(username, passwords) VALUES (?, ?)"
+	query := "INSERT INTO users(username, passwords, id_chalecos) VALUES (?, ?, ?)"
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Passwords), bcrypt.DefaultCost)
 	if err != nil {
 		return fmt.Errorf("no se pudo hashear la contraseña: %w", err)
 	}
 
-	_, err = r.conn.DB.Exec(query, user.UserName, hash)
+	_, err = r.conn.DB.Exec(query, user.UserName, hash, user.Id_chalecos)
 	if err != nil {
 		return fmt.Errorf("error al guardar el usuario: %w", err)
 	}
@@ -93,21 +93,29 @@ func (r *MYSQLRepository) Get() ([]domain.User, error) {
 }
 
 
-func (r *MYSQLRepository) Login(username, password string) (*domain.User, error) {
-	query := "SELECT id, username, passwords FROM users WHERE username = ? LIMIT 1"
+func (r *MYSQLRepository) Login(username, passwords string) (*domain.User, error) {
+	loginData := domain.User{
+		UserName: username,
+		Passwords: passwords,
+	}
+	
+	if err := loginData.ValidatePassword(); err != nil {
+		return nil, err
+	}
+
+	query := "SELECT  username, passwords FROM users WHERE username = ? LIMIT 1"
 	row := r.conn.DB.QueryRow(query, username)
 
 	var user domain.User
-	err := row.Scan(&user.Id, &user.UserName, &user.Passwords)
+	err := row.Scan(&user.UserName, &user.Passwords)
 	if err != nil {
 		return nil, fmt.Errorf("usuario no encontrado: %w", err)
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Passwords), []byte(password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Passwords), []byte(passwords))
 	if err != nil {
 		return nil, fmt.Errorf("contraseña incorrecta")
 	}
 
 	return &user, nil
 }
-

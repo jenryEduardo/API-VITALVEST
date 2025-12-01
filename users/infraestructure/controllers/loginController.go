@@ -6,6 +6,7 @@ import (
 	"API-VITALVEST/users/domain"
 	"API-VITALVEST/users/infraestructure"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,6 +26,11 @@ func LoginController(c *gin.Context) {
 	// Verifica username y password
 	user, err := uc.Execute(req.UserName, req.Passwords)
 	if err != nil {
+		// Diferenciar entre error de validación y credenciales incorrectas
+		if strings.Contains(err.Error(), "caracteres") {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Credenciales inválidas"})
 		return
 	}
@@ -36,7 +42,8 @@ func LoginController(c *gin.Context) {
 		return
 	}
 
-	// Respuesta
+	// Respuesta exitosa (no enviar la contraseña)
+	user.Passwords = ""
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,
 		"user":  user,
