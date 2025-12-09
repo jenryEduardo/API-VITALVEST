@@ -34,8 +34,7 @@ func (ctrl *SaveGSRController) Run(c *gin.Context) {
 			"data": gin.H{
 				"type": "gsr",
 				"attributes": gin.H{
-					"conductancia": gsr.Conductancia,
-					"estado de hidratación":gsr.Estado_hidratacion,
+					"porcentaje": gsr.Porcentaje,
 				},
 			},
 		})

@@ -16,8 +16,8 @@ func NewMYSQLRepository(db *sql.DB) *MYSQLRepository {
 }
 
 func (r *MYSQLRepository) Save(gsr domain.Gsr) error {
-	query := "INSERT INTO gsr (conductancia, estado_hidratacion) VALUES (?, ?)"
-	_, err := r.db.Exec(query, gsr.Conductancia, gsr.Estado_hidratacion)
+	query := "INSERT INTO gsr (porcentaje) VALUES  (?)"
+	_, err := r.db.Exec(query, gsr.Porcentaje)
 	return err
 }
 
@@ -32,8 +32,8 @@ func (r *MYSQLRepository) DeleteByID(id int) error {
 }
 
 func (r *MYSQLRepository) UpdateByID(id int, gsr domain.Gsr) error {
-	query := "UPDATE gsr SET conductancia=?, estado_hidratacion=? WHERE id = ?"
-	result, err := r.db.Exec(query, gsr.Conductancia, gsr.Estado_hidratacion, id)
+	query := "UPDATE gsr SET porcentaje =? WHERE id = ?"
+	result, err := r.db.Exec(query, gsr.Porcentaje, id)
 
 	if err != nil {
 		log.Println("no se pudo actualizar el dato, verifique la sintaxis o los datos:", err)
@@ -49,7 +49,7 @@ func (r *MYSQLRepository) UpdateByID(id int, gsr domain.Gsr) error {
 }
 
 func (r *MYSQLRepository) FindAll() ([]domain.Gsr, error) {
-	query := "SELECT conductancia, estado_hidratacion FROM gsr"
+	query := "SELECT porcentaje FROM gsr"
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -59,7 +59,7 @@ func (r *MYSQLRepository) FindAll() ([]domain.Gsr, error) {
 	var gsrs []domain.Gsr
 	for rows.Next() {
 		var gsr domain.Gsr
-		err := rows.Scan(&gsr.Conductancia, &gsr.Estado_hidratacion)
+		err := rows.Scan(&gsr.Porcentaje)
 		if err != nil {
 			return nil, err
 		}
@@ -70,7 +70,7 @@ func (r *MYSQLRepository) FindAll() ([]domain.Gsr, error) {
 }
 
 func (r *MYSQLRepository) FindByID(id int) ([]domain.Gsr, error) {
-	query := "SELECT conductancia, estado_hidratacion FROM gsr WHERE id = ?"
+	query := "SELECT porcentaje FROM gsr WHERE id = ?"
 	rows, err := r.db.Query(query, id)
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func (r *MYSQLRepository) FindByID(id int) ([]domain.Gsr, error) {
 	var gsrs []domain.Gsr
 	for rows.Next() {
 		var gsr domain.Gsr
-		err := rows.Scan(&gsr.Conductancia, &gsr.Estado_hidratacion)
+		err := rows.Scan(&gsr.Porcentaje)
 		if err != nil {
 			return nil, err
 		}

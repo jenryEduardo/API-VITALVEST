@@ -19,7 +19,7 @@ func NewMYSQLRepository(db *sql.DB) *MYSQLRepository {
 // Guarda un nuevo registro en la tabla mpu
 func (r *MYSQLRepository) Save(mpu domain.Mpu) error {
 	tiempo := time.Now()
-	query := `INSERT INTO mpu (pasos,fecha) VALUES (?, ?)`
+	query := `INSERT INTO mpu (pasos) VALUES (?)`
 	_, err := r.db.Exec(query,
 		&mpu.Pasos,
 		tiempo,
@@ -61,11 +61,7 @@ func (r *MYSQLRepository) DeleteByID(id int) error {
 
 // Obtiene todos los registros
 func (r *MYSQLRepository) FindAll() ([]domain.Mpu, error) {
-    query := `
-        SELECT DATE(fecha) as fecha, SUM(pasos) as total_pasos
-        FROM mpu
-        GROUP BY DATE(fecha)
-        ORDER BY DATE(fecha) DESC`
+    query := "SELECT pasos FROM mpu"
 
     rows, err := r.db.Query(query)
     if err != nil {
@@ -76,7 +72,7 @@ func (r *MYSQLRepository) FindAll() ([]domain.Mpu, error) {
     var MPUs []domain.Mpu
     for rows.Next() {
         var m domain.Mpu
-        err := rows.Scan(&m.Fecha, &m.Pasos)
+        err := rows.Scan(&m.Pasos)
         if err != nil {
             return nil, err
         }
@@ -91,7 +87,7 @@ func (r *MYSQLRepository) FindAll() ([]domain.Mpu, error) {
 }
 
 func (r *MYSQLRepository) GetAll() ([]domain.Mpu, error) {
-	query := "SELECT pasos, fecha FROM mpu"
+	query := "SELECT pasos FROM mpu"
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -101,7 +97,7 @@ func (r *MYSQLRepository) GetAll() ([]domain.Mpu, error) {
 	var mpus []domain.Mpu
 	for rows.Next() {
 		var Mpu domain.Mpu
-		err := rows.Scan(&Mpu.Pasos, &Mpu.Fecha)
+		err := rows.Scan(&Mpu.Pasos)
 		if err != nil {
 			return nil, err
 		}
@@ -113,7 +109,7 @@ func (r *MYSQLRepository) GetAll() ([]domain.Mpu, error) {
 
 // Obtiene registros por id (aunque suele ser solo uno, retorna slice por consistencia)
 func (r *MYSQLRepository) FindByID(id int) ([]domain.Mpu, error) {
-	query := `SELECT id, pasos, fecha FROM mpu WHERE id = ?`
+	query := `SELECT id, pasos FROM mpu WHERE id = ?`
 	rows, err := r.db.Query(query, id)
 	if err != nil {
 		return nil, err
@@ -123,7 +119,7 @@ func (r *MYSQLRepository) FindByID(id int) ([]domain.Mpu, error) {
 	var MPUs []domain.Mpu
 	for rows.Next() {
 		var m domain.Mpu
-		err := rows.Scan(&m.Id, &m.Pasos,&m.Fecha)
+		err := rows.Scan(&m.Id, &m.Pasos)
 		if err != nil {
 			return nil, err
 		}

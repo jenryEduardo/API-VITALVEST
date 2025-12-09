@@ -15,5 +15,4 @@ package domain
 type Mpu struct {
 	Id int
 	Pasos  int    `json:"pasos"`
-	Fecha  string `json:"fecha"`
 }
