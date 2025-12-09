@@ -30,7 +30,7 @@ import (
 func main() {
 
 	// workerpool
-	pool := workerpool.New(10)
+	pool := workerpool.New(50)
 
 	router := gin.Default()
 
