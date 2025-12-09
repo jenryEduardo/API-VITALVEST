@@ -24,7 +24,7 @@ func InitBME(pool *workerpool.WorkerPool) {
 
 func NewSaveBMEController() *controllers.SaveBMEController {
 	useCase := application.NewSaveBME_UC(&mySQL)
-	return controllers.NewSaveBMEController(useCase)
+	return controllers.NewSaveBMEController(useCase, Pool)
 }
 
 func NewDeleteBMEController() *controllers.DeleteBMEController {

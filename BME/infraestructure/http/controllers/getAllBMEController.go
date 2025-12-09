@@ -3,6 +3,7 @@ package controllers
 import (
 	"API-VITALVEST/BME/application"
 	"API-VITALVEST/core/workerpool"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,28 +18,21 @@ func NewGetAllBMEController(uc *application.GetAllBME_UC, pool *workerpool.Worke
 }
 
 func (ctrl *GetAllBMEController) Run(c *gin.Context) {
-
-	resultChan := make(chan any)
-
-	// 🚀 Enviar el GET a un worker de manera concurrente
-	ctrl.pool.Submit(func() any {
-		data, err := ctrl.uc.Run()
-		if err != nil {
-			resultChan <- err
-			return nil
-		}
-		resultChan <- data
-		return nil
+	// Submit retorna directamente el canal de resultados
+	resultChan := ctrl.pool.Submit(func() (interface{}, error) {
+		return ctrl.uc.Run()
 	})
-
-	// Esperar el resultado
-	result := <-resultChan
-
-	// Validar errores
-	if err, ok := result.(error); ok {
-		c.JSON(400, gin.H{"error": err.Error()})
-		return
+	
+	// Esperar resultado con timeout
+	select {
+	case result := <-resultChan:
+		if result.Err != nil {
+			c.JSON(400, gin.H{"error": result.Err.Error()})
+			return
+		}
+		c.JSON(200, gin.H{"BME": result.Data})
+		
+	case <-time.After(5 * time.Second):
+		c.JSON(504, gin.H{"error": "request timeout"})
 	}
-
-	c.JSON(200, gin.H{"BME": result})
 }

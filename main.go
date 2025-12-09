@@ -1,8 +1,6 @@
 package main
 
 import (
-	// login "API-VITALVEST/login/infraestructure/routes"
-	//sesiones "API-VITALVEST/sesion/infraestructure"
 	"log"
 	"API-VITALVEST/core/workerpool"
 	dependenciesBME "API-VITALVEST/BME/infraestructure/dependencies"
