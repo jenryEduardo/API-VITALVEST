@@ -5,13 +5,16 @@ import (
 	"API-VITALVEST/BME/infraestructure/http"
 	"API-VITALVEST/BME/infraestructure/http/controllers"
 	"API-VITALVEST/core"
+	"API-VITALVEST/core/workerpool"
 )
 
 var (
 	mySQL infraestructure.MYSQLRepository
+	Pool *workerpool.WorkerPool
 )
 
-func InitBME() {
+func InitBME(pool *workerpool.WorkerPool) {
+	Pool = pool
 	db := core.GetDBPool()
 	if db == nil {
 		panic("Error: la conexión a la base de datos es nil")
@@ -36,7 +39,7 @@ func NewUpdateBMEController() *controllers.UpdateBMEController {
 
 func NewFindAllBMEController() *controllers.GetAllBMEController {
 	useCase := application.NewGetAllBME_UC(&mySQL)
-	return controllers.NewGetAllBMEController(useCase)
+	return controllers.NewGetAllBMEController(useCase, Pool)
 }
 
 func NewFindByIDBMEController() *controllers.GetBMEbyIDController {

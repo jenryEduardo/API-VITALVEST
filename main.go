@@ -4,7 +4,7 @@ import (
 	// login "API-VITALVEST/login/infraestructure/routes"
 	//sesiones "API-VITALVEST/sesion/infraestructure"
 	"log"
-
+	"API-VITALVEST/core/workerpool"
 	dependenciesBME "API-VITALVEST/BME/infraestructure/dependencies"
 	bme "API-VITALVEST/BME/infraestructure/http/routes"
 	dependenciesGSR "API-VITALVEST/GSR/infraestructure/dependencies"
@@ -28,6 +28,10 @@ import (
 )
 
 func main() {
+
+	// workerpool
+	pool := workerpool.New(10)
+
 	router := gin.Default()
 
 	// Configurar CORS
@@ -41,7 +45,7 @@ func main() {
 	// Inicializar dependencias de sensores
 	dependenciesGSR.InitGSR()
 	dependenciesmlx.InitMLX()
-	dependenciesBME.InitBME()
+	dependenciesBME.InitBME(pool)
 	dependenciesMPU.InitMPU()
 	dependenciesAlertas.InitAlerta()
 
@@ -62,39 +66,3 @@ func main() {
 	log.Printf("🌐 Servidor corriendo en http://localhost%s", port)
 	log.Fatal(router.Run(port))
 }
-
-// // handleLogin maneja la autenticación de usuarios
-// func handleLogin(c *gin.Context) {
-// 	var loginRequest struct {
-// 		Username string `json:"username"`
-// 		Password string `json:"password"`
-// 	}
-
-// 	if err := c.ShouldBindJSON(&loginRequest); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Datos inválidos"})
-// 		return
-// 	}
-
-// 	// Usuarios válidos (en producción esto vendría de una base de datos)
-// 	validUsers := map[string]string{
-// 		"admin":  "admin123",
-// 		"juan":   "juan123",
-// 		"maria":  "maria123",
-// 		"carlos": "carlos123",
-// 	}
-
-// 	if password, exists := validUsers[loginRequest.Username]; exists && password == loginRequest.Password {
-// 		userData := []map[string]interface{}{
-// 			{
-// 				"id":       1,
-// 				"username": loginRequest.Username,
-// 				"name":     loginRequest.Username,
-// 				"role":     "user",
-// 			},
-// 		}
-// 		log.Printf("✅ Login exitoso para usuario: %s", loginRequest.Username)
-// 		c.JSON(http.StatusOK, userData)
-// 	} else {
-// 		log.Printf("❌ Login fallido para usuario: %s", loginRequest.Username)
-// 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Credenciales incorrectas"})
-// 	}
