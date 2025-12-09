@@ -41,7 +41,7 @@ func main() {
 	}))
 
 	// Inicializar dependencias de sensores
-	dependenciesGSR.InitGSR()
+	dependenciesGSR.InitGSR(pool)
 	dependenciesmlx.InitMLX()
 	dependenciesBME.InitBME(pool)
 	dependenciesMPU.InitMPU()
