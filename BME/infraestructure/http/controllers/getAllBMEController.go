@@ -16,10 +16,13 @@ func NewGetAllBMEController(uc *application.GetAllBME_UC) *GetAllBMEController{
 }
 
 func (ctrl *GetAllBMEController) Run(c *gin.Context) {
-	BMEs, err := ctrl.uc.Run()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Todos los campos son requeridos"})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{"BME" : BMEs})
+    BMEs, err := ctrl.uc.Run(c.Request.Context())
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{
+            "error": err.Error(),
+        })
+        return
+    }
+
+    c.JSON(http.StatusOK, gin.H{"BME": BMEs})
 }
