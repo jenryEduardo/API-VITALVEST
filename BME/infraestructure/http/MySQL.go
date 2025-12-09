@@ -49,7 +49,7 @@ func (r *MYSQLRepository) UpdateByID(id int, BME domain.Bme) error {
 }
 
 func (r *MYSQLRepository) FindAll() ([]domain.Bme, error) {
-	query := "SELECT temperatura, humedad, presion FROM bme"
+	query := "SELECT temperatura_ambiente, humedad, presion FROM bme"
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
